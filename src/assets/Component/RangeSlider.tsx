@@ -9,9 +9,9 @@ import RemoveIcon from "@mui/icons-material/Remove";
 interface RangeSliderProp {
   w: string;
   isWeek: boolean;
-  setIsWeek?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsWeek: (newValue: boolean) => void;
   selectedDayIndex: number[];
-  setSelectedDayIndex: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedDayIndex?: (newRange: number[]) => void;
 }
 const valuetext = (value: number) => {
   return daysOfWeek[value];
@@ -39,17 +39,11 @@ const RangeSlider = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _activeThumb: number = 0
   ) => {
-    if (Array.isArray(newValue)) {
-      setSelectedDayIndex(newValue);
-    } else {
-      setSelectedDayIndex([newValue]);
-    }
+    setSelectedDayIndex?.(Array.isArray(newValue) ? newValue : [newValue]);
     //console.log("Range" + selectedDayIndex);
   };
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (setIsWeek) {
-      setIsWeek(event.target.checked);
-    }
+    setIsWeek(event.target.checked);
   };
 
   const toggleIcon = () => {
@@ -63,7 +57,11 @@ const RangeSlider = ({
           sx={{ paddingX: "2rem" }}
           label={w}
           control={
-            <Checkbox checked={isWeek} onChange={handleCheckboxChange} />
+            <Checkbox
+              checked={isWeek}
+              onChange={handleCheckboxChange}
+              inputProps={{ "aria-label": "controlled" }}
+            />
           }
         />
         <Slider
